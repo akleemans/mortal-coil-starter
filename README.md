@@ -2,6 +2,6 @@
 
 Simple brute-force solver for [Mortal Coil puzzle](https://www.hacker.org/coil/index.php).
 
-Besides brute-forcing, the code provided can also color the level partitions.
+Written in Kotlin, provides a simple UI for showing the grid & debugging (see visited path).
 
-![Colored grid](grid.png)
+![Colored grid](ui.png)

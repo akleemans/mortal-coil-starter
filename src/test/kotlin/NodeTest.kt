@@ -12,16 +12,6 @@ class NodeTest {
     }
 
     @Test
-    fun isColored() {
-        val node = Node(0, 0, 0)
-
-        assertFalse(node.isColored())
-        node.color = Color.GREEN
-
-        assertTrue(node.isColored())
-    }
-
-    @Test
     fun getDegree() {
         val node = Node(0, 0, 0)
         val n1 = Node(1, 1, 0)

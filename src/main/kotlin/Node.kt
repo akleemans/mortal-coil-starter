@@ -18,10 +18,6 @@ class Node(var id: Int, var x: Int, var y: Int) {
         edges[direction] = node
     }
 
-    fun isColored(): Boolean {
-        return color != null
-    }
-
     override fun toString(): String {
         return "N$id"
     }

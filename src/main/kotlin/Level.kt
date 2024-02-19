@@ -11,7 +11,6 @@ class Level(
     val nodes: MutableList<Node> = ArrayList()
     private val nodeMap: MutableMap<Pair<Int, Int>, Node> = HashMap()
     private var ui: LevelUI? = null
-    private val random = Random()
     private var solution: Triple<String, Int, Int>? = null
 
     init {
@@ -63,108 +62,8 @@ class Level(
         readln()
     }
 
-    fun getRandomColor(): Color {
-        return Color(random.nextInt(256), random.nextInt(256), random.nextInt(256))
-    }
-
-    fun getOverlappingNodes(): List<Node> {
-        val overlappingNodes = mutableListOf<Node>()
-
-        for (node in nodes) {
-            val color = node.color
-            val neighbors = node.edges.values
-            val adjacentCaveCount = neighbors.count { it != null && it.color != color }
-
-            if (adjacentCaveCount > 1) {
-                overlappingNodes.add(node)
-            }
-        }
-        return overlappingNodes
-    }
-
-    fun colorCaves(): Set<Color> {
-        val colors: MutableSet<Color> = HashSet()
-
-        while (true) {
-            var startNode: Node? = null
-            for (node in nodes) {
-                if (!node.isColored() && node.getEdgeCount() > 2) {
-                    startNode = node
-                    break
-                }
-            }
-            if (startNode == null) {
-                break
-            }
-
-            var color = getRandomColor()
-            while (colors.contains(color)) {
-                color = getRandomColor()
-            }
-            colors.add(color)
-
-            val queue = mutableListOf(startNode)
-            while (queue.isNotEmpty()) {
-                val node = queue.removeLast()
-                if (node.isColored()) {
-                    continue
-                }
-                node.color = color
-                // Add neighbors
-                for ((direction, candidate) in node.edges) {
-                    if (candidate != null && !candidate.isColored() &&
-                        !isBoundary(node, candidate, direction)
-                    ) {
-                        queue.add(candidate)
-                    }
-                }
-            }
-        }
-        debugLog("colorCaves(): Grid after initial coloring")
-
-        // Glue 1- and 2-degree nodes together
-        while (!isGraphColored()) {
-            for (node in nodes) {
-                if (!node.isColored()) {
-                    for (candidate in node.edges.values) {
-                        if (candidate != null && candidate.isColored()) {
-                            node.color = candidate.color
-                            break
-                        }
-                    }
-                }
-            }
-        }
-        debugLog("colorCaves(): Grid after gluing 1- and 2-degree nodes", true)
-        return colors
-    }
-
-    fun isGraphColored(): Boolean {
-        return nodes.all { it.isColored() }
-    }
-
     fun allNodesVisited(): Boolean {
         return nodes.all { it.visited }
-    }
-
-    fun isBoundary(node: Node, neighbor: Node, direction: Direction): Boolean {
-        if (node.getEdgeCount() == 2 || neighbor.getEdgeCount() == 2) {
-            return true
-        }
-        if (direction in arrayOf(Direction.LEFT, Direction.RIGHT)) {
-            if (node.getNeighbor(Direction.UP) == null && neighbor.getNeighbor(Direction.DOWN) == null) {
-                return true
-            } else if (node.getNeighbor(Direction.DOWN) == null && neighbor.getNeighbor(Direction.UP) == null) {
-                return true
-            }
-        } else if (direction in arrayOf(Direction.UP, Direction.DOWN)) {
-            if (node.getNeighbor(Direction.RIGHT) == null && neighbor.getNeighbor(Direction.LEFT) == null) {
-                return true
-            } else if (node.getNeighbor(Direction.LEFT) == null && neighbor.getNeighbor(Direction.RIGHT) == null) {
-                return true
-            }
-        }
-        return false
     }
 
     /**
@@ -211,7 +110,6 @@ class Level(
     }
 
     private fun bruteForce() {
-        readln()
         for (node in nodes) {
             node.color = Color.RED
             debugLog("bruteForce(): Starting with $node", true)
@@ -263,7 +161,6 @@ class Level(
     }
 
     fun solve(): Triple<String, Int, Int> {
-        colorCaves()
         bruteForce()
 
         if (solution != null) {
